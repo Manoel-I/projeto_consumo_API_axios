@@ -18,17 +18,47 @@
     <button type="button" onclick="createGame()">Create</button>
     <br><br>
     <hr>
-    <h4>Edit Game</h4>
+    <h4>Edit Game: </h4>
     <input type="text" name="idEdit" id="idEdit" readonly placeholder="ID:">
     <input type="text" name="titleEdit" id="titleEdit" placeholder="Title:">
     <input type="number" name="yearEdit" id="yearEdit" placeholder="Year:">
     <input type="number" name="priceEdit" id="priceEdit" placeholder="Price:">
     <button type="button" onclick="editGame()">Edit</button>
+    <br><br>
+    <hr>
+    <h4>User Login: </h4>
+    <input type="text" name="email" id="email" placeholder="email:" value="manoel.bcneto@gmail.com.br">
+    <input type="text" name="password" id="password" placeholder="password:" value="Manu333opaNode">
+    <button type="button" onclick="userLogin()">Log in</button>
 
 </body>
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
+    let axiosConfig = {
+        headers :{
+            Authorization : ""
+        }
+    };
+
+    function userLogin(){
+        let emailInput = document.getElementById('email');
+        let passwordInput = document.getElementById('password');
+
+        let user = {
+            email : emailInput.value,
+            password : passwordInput.value
+        }
+
+        axios.post('http://localhost:8080/auth',user)
+            .then(response =>{
+                axiosConfig.headers.Authorization = `Bearer ${response.data.token}`;
+                gameList();
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }
 
     function editGame(){
         let id = document.getElementById('idEdit');
@@ -108,7 +138,8 @@
             })
     }
 
-    axios.get("http://localhost:8080/games")
+    function gameList(){
+        axios.get("http://localhost:8080/games", axiosConfig)
         .then(response =>{
             let games = response.data;
             let list = document.getElementById('ul_lista_games');
@@ -126,7 +157,6 @@
                    fillEditInputs(item); 
                 });
 
-
                 //atributos customizados 
                 item.setAttribute('data-id', element.id);
                 item.setAttribute('data-title', element.title);
@@ -141,6 +171,8 @@
         }).catch(error =>{
             console.log(error);
         });
+    }
+    
 
 </script>
 

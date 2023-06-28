@@ -18,8 +18,8 @@ function auth(req, res, next){
 
     jwt.verify(token, JWTSecret, (error, data)=>{
         if(error){
-            send.status(401);
-            send.json({error : "Invalid token"});
+            res.status(401);
+            res.json({error : "Invalid token"});
         }else{
             req.token = token;
             req.loggedUser = {id : data.id, email : data.email};
