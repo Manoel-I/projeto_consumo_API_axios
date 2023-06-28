@@ -37,7 +37,7 @@
 <script>
     let axiosConfig = {
         headers :{
-            Authorization : ""
+            Authorization : `Bearer ${localStorage.getItem("token")}`
         }
     };
 
@@ -53,6 +53,7 @@
         axios.post('http://localhost:8080/auth',user)
             .then(response =>{
                 axiosConfig.headers.Authorization = `Bearer ${response.data.token}`;
+                localStorage.setItem("token", response.data.token);
                 gameList();
             })
             .catch(error => {
@@ -72,7 +73,7 @@
             price : priceInput.value
         }
 
-        axios.put(`http://localhost:8080/game/${id.value}`, game)
+        axios.put(`http://localhost:8080/game/${id.value}`, game, axiosConfig)
             .then(response =>{
                 console.log(response);
                 if(response.status == 200){
@@ -108,7 +109,7 @@
             price : priceInput.value
         }
 
-        axios.post("http://localhost:8080/game", game)
+        axios.post("http://localhost:8080/game", game, axiosConfig)
             .then(response =>{
                 console.log(response);
                 if(response.status == 200){
@@ -123,7 +124,7 @@
 
     function deleteGame(item){
         let id = item.getAttribute('data-id');
-        axios.delete(`http://localhost:8080/game/${id}`)
+        axios.delete(`http://localhost:8080/game/${id}`, axiosConfig)
             .then(response =>{
                 console.log(response);
                 if(response.status == 200){

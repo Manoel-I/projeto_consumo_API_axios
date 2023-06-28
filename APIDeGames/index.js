@@ -64,7 +64,7 @@ app.get("/games",auth,(req, res) => {
     res.json(DB.games);
 });
 
-app.get("/game/:id",(req, res) => {
+app.get("/game/:id",auth,(req, res) => {
     if(isNaN(req.params.id)){
         res.sendStatus(400);
     }else{
@@ -82,7 +82,7 @@ app.get("/game/:id",(req, res) => {
     }
 });
 
-app.post("/game",(req, res) => { 
+app.post("/game",auth,(req, res) => { 
     var {title, price, year} = req.body;
     var randomNumber = Math.floor(Math.random() * 99999);
     if(randomNumber == 0){
@@ -97,7 +97,7 @@ app.post("/game",(req, res) => {
     res.sendStatus(200);
 })
 
-app.delete("/game/:id",(req, res) => {
+app.delete("/game/:id",auth,(req, res) => {
     if(isNaN(req.params.id)){
         res.sendStatus(400);
     }else{
@@ -113,7 +113,7 @@ app.delete("/game/:id",(req, res) => {
     }
 });
 
-app.put("/game/:id",(req, res) => {
+app.put("/game/:id",auth,(req, res) => {
 
     if(isNaN(req.params.id)){
         res.sendStatus(400);
