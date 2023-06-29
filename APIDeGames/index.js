@@ -28,6 +28,7 @@ function auth(req, res, next){
     });
 }
 
+// fake Database : )
 var DB = {
     games: [
         {
@@ -68,14 +69,28 @@ app.get("/game/:id",auth,(req, res) => {
     if(isNaN(req.params.id)){
         res.sendStatus(400);
     }else{
-        
         var id = parseInt(req.params.id);
-
+        let hateoas = [
+            {
+                href : "http://localhost:8080/game/"+id,
+                rel : "self",
+                method : "GET"
+            },
+            {
+                href : "http://localhost:8080/game/"+id,
+                rel : "delete_game",
+                method : "DELETE"
+            },
+            {
+                href : "http://localhost:8080/game/"+id,
+                rel : "edit_game",
+                method : "PUT"
+            }
+        ];
         var game = DB.games.find(g => g.id == id);
-
         if(game != undefined){
             res.statusCode = 200;
-            res.json(game);
+            res.json({game : game, _links:hateoas});
         }else{
             res.sendStatus(404);
         }
@@ -106,25 +121,48 @@ app.delete("/game/:id",auth,(req, res) => {
         res.sendStatus(400);
     }else{
         var id = parseInt(req.params.id);
+        let hateoas = [
+            {
+                href : "http://localhost:8080/games",
+                rel : "get_all_games",
+                method : "GET"
+            }
+        ];
         var index = DB.games.findIndex(g => g.id == id);
 
         if(index == -1){
             res.sendStatus(404);
         }else{
             DB.games.splice(index,1);
-            res.sendStatus(200);
+            res.status(200);
+            res.json({_links : hateoas});
         }
     }
 });
 
 app.put("/game/:id",auth,(req, res) => {
-
     if(isNaN(req.params.id)){
         res.sendStatus(400);
     }else{
         
         var id = parseInt(req.params.id);
-
+        let hateoas = [
+            {
+                href : "http://localhost:8080/game/"+id,
+                rel : "self",
+                method : "GET"
+            },
+            {
+                href : "http://localhost:8080/game/"+id,
+                rel : "delete_game",
+                method : "DELETE"
+            },
+            {
+                href : "http://localhost:8080/game/"+id,
+                rel : "edit_game",
+                method : "PUT"
+            }
+        ];
         var game = DB.games.find(g => g.id == id);
 
         if(game != undefined){
@@ -144,7 +182,8 @@ app.put("/game/:id",auth,(req, res) => {
                 game.year = year;
             }
             
-            res.sendStatus(200);
+            res.status(200);
+            res.json({game : game , _links : hateoas});
 
         }else{
             res.sendStatus(404);
@@ -168,7 +207,14 @@ app.post('/auth', (req, res)=>{
                         res.json({error : "internal failure"});
                     }else{
                         res.status(200);
-                        res.json({token : token });
+                        let hateoas = [
+                            {
+                                href : "http://localhost:8080/games",
+                                rel : "get_all_games",
+                                method : "GET"
+                            }
+                        ];
+                        res.json({token : token, _links : hateoas });
                     }
                 }); 
             }else{
