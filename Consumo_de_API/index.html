@@ -42,6 +42,10 @@
     };
 
     function userLogin(){
+        let list = document.getElementById('ul_lista_games');
+        if(list.firstChild != null){
+            return;
+        }
         let emailInput = document.getElementById('email');
         let passwordInput = document.getElementById('password');
 
@@ -75,16 +79,27 @@
 
         axios.put(`http://localhost:8080/game/${id.value}`, game, axiosConfig)
             .then(response =>{
-                console.log(response);
                 if(response.status == 200){
                     alert("Updated Game");
                 }
-                location.reload();
+                deleteDataInputs(titleInput, yearInput, priceInput, id);
+                let list = document.getElementById('ul_lista_games');
+                list.innerHTML = '';
+                gameList();
             })
             .catch(error =>{
                 console.log(error);
             });
 
+    }
+
+    function deleteDataInputs(title, year, price, id = null){
+        title.value = '';
+        year.value = '';
+        price.value = '';
+        if(id != null){
+            id.value = '';
+        }
     }
 
     function fillEditInputs(item){
@@ -111,11 +126,13 @@
 
         axios.post("http://localhost:8080/game", game, axiosConfig)
             .then(response =>{
-                console.log(response);
                 if(response.status == 200){
                     alert("Registered Game");
                 }
-                location.reload();
+                let list = document.getElementById('ul_lista_games');
+                list.innerHTML = '';
+                deleteDataInputs(titleInput, yearInput, priceInput);
+                gameList();
             })
             .catch(error =>{
                 console.log(error);
@@ -126,10 +143,11 @@
         let id = item.getAttribute('data-id');
         axios.delete(`http://localhost:8080/game/${id}`, axiosConfig)
             .then(response =>{
-                console.log(response);
                 if(response.status == 200){
                     alert("The game has been deleted");
-                    location.reload();
+                    let list = document.getElementById('ul_lista_games');
+                    list.innerHTML = '';
+                    gameList();
                 }else{
                     alert(response.statusText);
                 }
