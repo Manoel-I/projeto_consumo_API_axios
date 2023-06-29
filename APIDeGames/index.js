@@ -86,7 +86,7 @@ app.post("/game",auth,(req, res) => {
     var {title, price, year} = req.body;
     if(title == '' || price == '' || year == ''){
         res.sendStatus(406);
-        res.json({error : "Empty field(s)"})
+        return;
     }
     var randomNumber = Math.floor(Math.random() * 99999);
     if(randomNumber == 0){
